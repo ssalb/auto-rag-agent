@@ -1,0 +1,67 @@
+from smolagents import Tool
+from docling.document_converter import DocumentConverter
+from docling.chunking import HybridChunker
+from rag_agent.tools.utils.embeddings import encode
+from rag_agent.tools.utils.ner import extract_entities
+
+import logging
+logger = logging.getLogger(__name__)
+
+class DocumentIndexer(Tool):
+    name = "document_indexer"
+    description = """This is a tool that indexes documents for later retrieval."""
+    inputs = {
+        "document_path": {
+            "type": "string",
+            "description": "a list of documents to index",
+        }
+    }
+    output_type = "string"
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.converter = DocumentConverter()
+        self.chunker = HybridChunker()
+
+    def forward(self, document_path: str) -> None:
+
+        doc_name = document_path.split("/")[-1]
+        response_text = f"Processing {doc_name}...\n"
+
+        try:
+            doc = self.converter.convert(document_path).document
+        except Exception as e:
+            logger.warning(f"Failed to convert document: {e}")
+            return response_text + "Failed to convert document"
+
+        try:
+            chunk_iter = self.chunker.chunk(dl_doc=doc)
+
+            rows = []
+            for chunk in chunk_iter:
+                # Using only text for now. More features would depend on the nature of the document
+                enriched_text = self.chunker.serialize(chunk=chunk)
+                entities = extract_entities(enriched_text)
+                embeddings = encode([enriched_text])
+                
+                # Only using the entity keys for now, without the types
+                row = (enriched_text, entities.keys(), embeddings)
+                rows.append(row)
+        except Exception as e:
+            logger.warning(f"Failed to process chuncks: {e}")
+            response_text += "Failed to process chuncks. Will try to index the rest of the document.\n"
+
+        try:
+            # TODO Index the rows
+            pass
+        except Exception as e:
+            logger.warning(f"Failed to index document: {e}")
+            return response_text + "Failed to index document."
+
+        return response_text + "Document indexed successfully."
+
+
+if __name__ == "__main__":
+    indexer = DocumentIndexer()
+    result = indexer.forward("../../README.md")
+    print(result)
