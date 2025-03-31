@@ -1,6 +1,9 @@
 import gradio as gr
 from rag_agent.tools.indexer import DocumentIndexer
 
+from rag_agent.db import init_db
+init_db()
+
 def dummy(message, history):
     indexer = DocumentIndexer()
     for doc in message["files"]:
