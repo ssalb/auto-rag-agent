@@ -16,5 +16,6 @@ def create_schema(conn):
 
 def init_db():
     conn = get_connection()
+    conn.execute("SET hnsw_enable_experimental_persistence = true")
     create_schema(conn)
     return conn

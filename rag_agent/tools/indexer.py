@@ -3,9 +3,12 @@ from docling.document_converter import DocumentConverter
 from docling.chunking import HybridChunker
 from rag_agent.tools.utils.embeddings import encode
 from rag_agent.tools.utils.ner import extract_entities
+from rag_agent.tools.utils.semantic_search import bulk_insert_chunks
 
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 class DocumentIndexer(Tool):
     name = "document_indexer"
@@ -42,18 +45,21 @@ class DocumentIndexer(Tool):
                 # Using only text for now. More features would depend on the nature of the document
                 enriched_text = self.chunker.serialize(chunk=chunk)
                 entities = extract_entities(enriched_text)
-                embeddings = encode([enriched_text])
-                
-                # Only using the entity keys for now, without the types
-                row = (enriched_text, entities.keys(), embeddings)
+                embedding = encode([enriched_text])
+
+                row = {
+                    "doc_name": doc_name,
+                    "chunk_text": enriched_text,
+                    "named_entities": entities,
+                    "embedding": embedding[0].tolist(),
+                }
                 rows.append(row)
         except Exception as e:
             logger.warning(f"Failed to process chuncks: {e}")
             response_text += "Failed to process chuncks. Will try to index the rest of the document.\n"
 
         try:
-            # TODO Index the rows
-            pass
+            bulk_insert_chunks(rows)
         except Exception as e:
             logger.warning(f"Failed to index document: {e}")
             return response_text + "Failed to index document."

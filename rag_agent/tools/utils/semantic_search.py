@@ -58,15 +58,15 @@ def search_similar_chunks(query_embedding, limit=5):
     
     return formatted_results
 
-def bulk_insert_chunks(chunk_list):
+def bulk_insert_chunks(chunks_list):
     """
     Bulk insert multiple document chunks
     
     Args:
-        chunk_list: List of dictionaries, each containing:
+        chunks_list: List of dictionaries, each containing:
             - doc_name: Document name/ID
             - chunk_text: Text content
-            - named_entities: List or JSON string of named entities
+            - named_entities: Dict of named entities
             - embedding: Vector embedding as list of floats
                 
     Returns:
@@ -76,7 +76,7 @@ def bulk_insert_chunks(chunk_list):
     
     # Convert list of dictionaries to list of tuples
     formatted_chunks = []
-    for chunk in chunk_list:
+    for chunk in chunks_list:
         # Process named_entities to ensure it's JSON
         named_entities = chunk.get("named_entities", [])
         if not isinstance(named_entities, str):

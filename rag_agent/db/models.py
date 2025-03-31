@@ -12,7 +12,6 @@ class DocumentModel:
         
         conn.execute(f"""
         CREATE TABLE IF NOT EXISTS {cls.table_name} (
-            id INTEGER PRIMARY KEY,
             doc_name TEXT NOT NULL,
             chunk_text TEXT NOT NULL,
             named_entities JSON,

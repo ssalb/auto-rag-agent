@@ -26,7 +26,11 @@ class DuckDBConnection:
             
             # Register array type for embeddings
             embedding_type = f"FLOAT[{DuckDBConfig.EMBEDDING_DIM}]"
-            self.conn.execute(f"CREATE TYPE IF NOT EXISTS embedding AS {embedding_type}")
+            try:
+                self.conn.execute(f"CREATE TYPE embedding AS {embedding_type}")
+            except Exception as e:
+                if "already exists" not in str(e).lower():
+                    raise e
         
         return self.conn
     

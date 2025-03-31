@@ -8,7 +8,7 @@ model = "BAAI/bge-small-en-v1.5"
 emb_model = SentenceTransformer(model, device=config.device)
 
 def encode(texts: list[str]) -> list[ndarray]:
-    return emb_model.encode(texts)
+    return emb_model.encode(texts, truncate=True)
 
 if __name__ == "__main__":
     text = (
