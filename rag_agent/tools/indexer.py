@@ -12,7 +12,10 @@ logger = logging.getLogger(__name__)
 
 class DocumentIndexer(Tool):
     name = "document_indexer"
-    description = """This is a tool that indexes documents for later retrieval."""
+    description = (
+        "This is a tool that indexes documents for later retrieval. "
+        "Only use this tool if a document or a URL has been provided by the user."
+    )
     inputs = {
         "document_path": {
             "type": "string",

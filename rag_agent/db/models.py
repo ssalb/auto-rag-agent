@@ -86,7 +86,6 @@ class DocumentModel:
         
         result = conn.execute(f"""
         SELECT 
-            id,
             doc_name,
             chunk_text,
             named_entities,

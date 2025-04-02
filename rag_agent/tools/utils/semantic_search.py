@@ -49,11 +49,10 @@ def search_similar_chunks(query_embedding, limit=5):
     formatted_results = []
     for row in results:
         formatted_results.append({
-            "id": row[0],
-            "doc_name": row[1],
-            "chunk_text": row[2],
-            "named_entities": json.loads(row[3]) if row[3] else [],
-            "distance": row[4]
+            "doc_name": row[0],
+            "chunk_text": row[1],
+            "named_entities": json.loads(row[2]) if row[2] else {},
+            "distance": row[3]
         })
     
     return formatted_results
@@ -78,7 +77,7 @@ def bulk_insert_chunks(chunks_list):
     formatted_chunks = []
     for chunk in chunks_list:
         # Process named_entities to ensure it's JSON
-        named_entities = chunk.get("named_entities", [])
+        named_entities = chunk.get("named_entities", {})
         if not isinstance(named_entities, str):
             named_entities = json.dumps(named_entities)
             
