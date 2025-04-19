@@ -31,7 +31,7 @@ def store_document_chunk(doc_name, chunk_text, named_entities, embedding):
     
     return True
 
-def search_similar_chunks(query_embedding, limit=5):
+def search_similar_chunks(query_embedding, limit=5, doc_scope=None):
     """
     Search for similar document chunks using vector similarity
     
@@ -43,7 +43,7 @@ def search_similar_chunks(query_embedding, limit=5):
         List of matching document chunks with similarity scores
     """
     conn = get_connection()
-    results = DocumentModel.search_similar(conn, query_embedding, limit)
+    results = DocumentModel.search_similar(conn, query_embedding, limit, doc_scope=doc_scope)
     
     # Format results as dictionaries
     formatted_results = []

@@ -80,7 +80,7 @@ class DocumentModel:
             raise e
     
     @classmethod
-    def search_similar(cls, conn, query_embedding, limit=5):
+    def search_similar(cls, conn, query_embedding, limit=5, doc_scope=None):
         """Search for similar document chunks using vector similarity"""
         embedding_type = f"FLOAT[{DuckDBConfig.EMBEDDING_DIM}]"
         
@@ -91,6 +91,7 @@ class DocumentModel:
             named_entities,
             array_distance(embedding, ?::{embedding_type}) as distance
         FROM {cls.table_name}
+        {"WHERE doc_name = '"+doc_scope+"'" if doc_scope is not None else ''}
         ORDER BY array_distance(embedding, ?::{embedding_type})
         LIMIT ?
         """, (query_embedding, query_embedding, limit)).fetchall()

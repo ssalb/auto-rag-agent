@@ -14,12 +14,14 @@ class DocumentIndexer(Tool):
     name = "document_indexer"
     description = (
         "This is a tool that indexes documents for later retrieval. "
-        "Only use this tool if a document or a URL has been provided by the user."
+        "Only use this tool if a document or a URL has been provided by the user. "
+        "If a URL is provided, it must start with 'https://'. "
+        "Returns: A string containing the status of the indexing process. "
     )
     inputs = {
         "document_path": {
             "type": "string",
-            "description": "a list of documents to index",
+            "description": "Document to index. It can be a local file path or a URL. ",
         }
     }
     output_type = "string"
