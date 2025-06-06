@@ -30,10 +30,10 @@ class SummarizerTool(Tool):
         self.model = model
 
     def forward(self, text: str, query: Optional[str] = None) -> str:
-        assert isinstance(text, str), "The text to summarize must be a string"
-        assert isinstance(
-            query, (str, type(None))
-        ), "The query must be a string or None"
+        if not isinstance(text, str):
+            raise TypeError("The text to summarize must be a string")
+        if not isinstance(query, (str, type(None))):
+            raise TypeError("The query must be a string or None")
 
         prompt = f"Summarize the following text:\n\n{text}\n"
         if query:
