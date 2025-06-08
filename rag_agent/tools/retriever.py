@@ -9,9 +9,10 @@ class TextRetriever(Tool):
     name = "search_tool"
     description = (
         "Uses semantic search to search parts of previously indexed documents that could be most relevant to answer your query. "
-        "If you need a tool for your task, you should always try this tool first, as it might already have the answer you are looking for. "
+        "If you need to search for your task, you should always try this tool first, as it might already have the answer you are looking for. "
         "If the results are not relevant, ask the user for more context in form of documents or URLs."
         "Returns: A string containing the retrieved text chunks. "
+        "Example usage: `print(search_tool(query='What is the capital of France?'))`"
     )
     inputs = {
         "query": {
@@ -25,7 +26,8 @@ class TextRetriever(Tool):
         "doc_name": {
             "type": "string",
             "description": (
-                "Optional. If provided, the search will be limited to this document. "
+                "Optional. If provided, the search will be limited to this document. Make sure to not provide a path, "
+                "but just the document name. "
                 f"If you don't have the document name, skip this field. The {name} tool always returns the document name "
                 "for each chunk, so you can use it to improve the search results in a subsequent step."
             ),
@@ -39,7 +41,8 @@ class TextRetriever(Tool):
         self.max_results = max_results
 
     def forward(self, query: str, doc_name: Optional[str] = None) -> str:
-        assert isinstance(query, str), "Your search query must be a string"
+        if not isinstance(query, str):
+            raise TypeError("Your search query must be a string")
 
         query_entities = extract_entities(query)
         query_embedding = encode([query])[0].tolist()

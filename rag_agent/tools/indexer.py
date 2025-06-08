@@ -16,7 +16,8 @@ class DocumentIndexer(Tool):
         "This is a tool that indexes documents for later retrieval. "
         "Only use this tool if a document or a URL has been provided by the user. "
         "If a URL is provided, it must start with 'https://'. "
-        "Returns: A string containing the status of the indexing process. "
+        "Returns: A string containing informing whether the indexing process succeeded. "
+        "Example usage: `print(document_indexer(document_path='https://example.com/my_document.pdf'))`"
     )
     inputs = {
         "document_path": {
@@ -48,7 +49,7 @@ class DocumentIndexer(Tool):
             rows = []
             for chunk in chunk_iter:
                 # Using only text for now. More features would depend on the nature of the document
-                enriched_text = self.chunker.serialize(chunk=chunk)
+                enriched_text = self.chunker.contextualize(chunk=chunk)
                 entities = extract_entities(enriched_text)
                 embedding = encode([enriched_text])
 
